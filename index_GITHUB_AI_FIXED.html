@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#070b10">
+<title>Alarm Engineer Toolkit V11</title>
+<style>
+:root{--bg:#070b10;--card:#101923;--card2:#0c141d;--text:#eef4fb;--muted:#9aaabd;--line:#263646;--blue:#54a8ff;--green:#42d39a;--orange:#ff765b;--yellow:#e8c34f}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+header{padding:22px 18px 14px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(7,11,16,.96);backdrop-filter:blur(12px);z-index:5}
+.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:14px;background:var(--orange);display:grid;place-items:center;font-weight:900;font-size:20px}.brand h1{font-size:22px;margin:0}.brand p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.search{margin-top:15px;display:flex;gap:8px}.search input{flex:1;padding:14px 15px;border:1px solid var(--line);border-radius:13px;background:#0c131b;color:#fff;font-size:16px;outline:none}.search button,.btn{border:1px solid #31587c;background:#102238;color:#cfe7ff;border-radius:12px;padding:12px 14px;font-weight:700}
+main{padding:18px 16px 92px;max-width:900px;margin:auto}.hero{padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#101b27,#0b121a);margin-bottom:16px}.hero h2{margin:0 0 8px;font-size:27px}.hero p{margin:0;color:var(--muted);line-height:1.5}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:17px;min-height:130px}.card h3{margin:7px 0 6px;font-size:17px}.card p{margin:0;color:var(--muted);font-size:13px;line-height:1.45}.icon{font-size:25px}
+section{margin-top:22px}.section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.section-title h2{font-size:21px;margin:0}.pill{font-size:11px;color:#b8d9f7;border:1px solid #31587c;padding:5px 8px;border-radius:999px}
+.list{display:grid;gap:9px}.item{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:14px}.item h3{margin:0 0 5px;font-size:16px}.item p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+details{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin:9px 0}summary{cursor:pointer;font-weight:800}.small{font-size:12px;color:var(--muted);line-height:1.55}.steps{padding-left:20px;color:#cbd8e5;line-height:1.65}.warning{border-left:4px solid var(--yellow);background:#211e0e;padding:12px;border-radius:10px;color:#eee2b0;font-size:13px;line-height:1.5}.link{color:#74b9ff;text-decoration:none;font-weight:700}.diagram{background:#091017;border:1px solid #31465a;border-radius:14px;padding:12px;margin-top:10px;overflow:auto}.terminal{display:inline-block;padding:7px 9px;border:1px solid #52708b;border-radius:8px;background:#101d28;margin:3px;font-size:12px}.arrow{text-align:center;color:var(--green);font-size:20px}.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{border-bottom:1px solid var(--line);padding:10px 7px;text-align:left;vertical-align:top}th{color:#cfe7ff}.source{font-size:11px;color:#8192a5;margin-top:8px}
+footer{position:fixed;bottom:0;left:0;right:0;background:rgba(7,11,16,.97);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 5px calc(8px + env(safe-area-inset-bottom));z-index:5}.nav{display:block;text-align:center;text-decoration:none;background:none;border:0;color:#91a2b4;font-size:11px}.nav b{display:block;font-size:18px;margin-bottom:2px}.nav.active{color:#fff}
+.hide{display:none!important}.calc-input{display:block;width:100%;padding:13px 14px;margin:8px 0;border:1px solid var(--line);border-radius:12px;background:#0c131b;color:#fff;font-size:16px;outline:none}.calc-input:focus{border-color:var(--blue)}
+/* CSS-only navigation: menu links work even if JavaScript is unavailable. */
+
+@media(max-width:560px){.grid{grid-template-columns:1fr 1fr}.card{min-height:120px}.two{grid-template-columns:1fr}.hero h2{font-size:24px}}
+ .home-link{display:inline-block;margin-bottom:12px;color:#74b9ff;text-decoration:none;font-weight:800;font-size:14px}
+</style>
+
+<style id="aiq-home-button">
+.aiq-home-button{
+position:fixed;left:12px;bottom:calc(72px + env(safe-area-inset-bottom));
+z-index:9999;padding:9px 13px;border:1px solid #31587c;border-radius:999px;
+background:#0b121a;color:#fff;text-decoration:none;font-weight:800;font-size:13px;
+box-shadow:0 3px 12px rgba(0,0,0,.35)
+}
+.aiq-home-button:active{transform:scale(.96)}
+</style>
+
+<style id="aiq-new-home">
+.home-hero{
+  text-align:center;
+  padding:12px 0 20px;
+}
+.home-logo{
+  width:76px;height:76px;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:22px;
+  background:linear-gradient(145deg,#54a8ff,#2368b8);
+  color:#fff;font-size:29px;font-weight:900;
+  box-shadow:0 10px 30px rgba(61,169,255,.18);
+}
+.home-hero h1{margin:0;font-size:30px;letter-spacing:-.5px}
+.home-hero p{margin:4px 0 0;color:#9eb0c3;font-size:13px}
+
+.home-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:11px;
+}
+.home-card{
+  min-height:128px;
+  padding:14px 10px;
+  border:1px solid #223a52;
+  border-radius:18px;
+  background:linear-gradient(145deg,#102033,#09131e);
+  color:#fff;
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.home-card:active{transform:scale(.97)}
+.home-card-icon{font-size:31px;line-height:1;margin-bottom:9px}
+.home-card strong{font-size:14px}
+.home-card small{
+  margin-top:5px;color:#8fa5ba;font-size:10px;line-height:1.25
+}
+
+.regulation-card{
+  display:flex;align-items:center;gap:12px;
+  margin-top:11px;padding:14px 15px;
+  border:1px solid #223a52;border-radius:16px;
+  background:linear-gradient(145deg,#102033,#09131e);
+  color:#fff;text-decoration:none;
+}
+.regulation-card>span{font-size:28px}
+.regulation-card div{flex:1}
+.regulation-card strong{display:block;font-size:14px}
+.regulation-card small{display:block;margin-top:3px;color:#8fa5ba;font-size:10px}
+.regulation-card b{font-size:25px;color:#54a8ff}
+</style>
+</head>
+<body>
+<a class="aiq-home-button" href="#home">🏠 Home</a>
+<header>
+  <div class="brand"><div class="logo">AE</div><div><h1>Alarm Engineer Toolkit</h1><p>V11 · UK field reference</p></div></div>
+  <div class="search"><input id="q" placeholder="Search panels, faults, wiring, manuals, tools…"><button onclick="doSearch()">Search</button></div>
+</header>
+
+<main id="app">
+
+<section id="home" class="view">
+  <div class="home-hero">
+    <div class="home-logo">IQ</div>
+    <h1>AlarmIQ</h1>
+    <p>Alarm Engineer Toolkit</p>
+  </div>
+
+  <div class="home-grid">
+
+    <a class="home-card" href="#faults">
+      <span class="home-card-icon">⚠️</span>
+      <strong>Fault Finding</strong>
+      <small>Diagnose common faults</small>
+    </a>
+
+    <a class="home-card" href="#wiring">
+      <span class="home-card-icon">🔌</span>
+      <strong>Wiring</strong>
+      <small>Wiring references</small>
+    </a>
+
+    <a class="home-card" href="#panels">
+      <span class="home-card-icon">📖</span>
+      <strong>Panel Manuals</strong>
+      <small>System information</small>
+    </a>
+
+    <a class="home-card" href="#codes">
+      <span class="home-card-icon">🔐</span>
+      <strong>Codes</strong>
+      <small>Engineer references</small>
+    </a>
+
+    <a class="home-card" href="#tools">
+      <span class="home-card-icon">🧮</span>
+      <strong>Engineer Tools</strong>
+      <small>Calculators & tools</small>
+    </a>
+
+    <a class="home-card" href="#site">
+      <span class="home-card-icon">📋</span>
+      <strong>Site Mode</strong>
+      <small>Site notes & checks</small>
+    </a>
+
+    <a class="home-card" href="#ai">
+      <span class="home-card-icon">🤖</span>
+      <strong>AI Engineer</strong>
+      <small>Engineer assistant</small>
+    </a>
+
+    <a class="home-card" href="#resources">
+      <span class="home-card-icon">🏭</span>
+      <strong>Manufacturers</strong>
+      <small>Resources & support</small>
+    </a>
+
+  </div>
+
+  <a class="regulation-card" href="#regulations">
+    <span>⚖️</span>
+    <div>
+      <strong>Regulations</strong>
+      <small>UK alarm regulations & standards</small>
+    </div>
+    <b>›</b>
+  </a>
+</section>
+
+
+<section class="view" id="faults">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>🔧 Fault Finding</h2><span class="pill">FIELD CHECKLISTS</span></div>
+<div class="list">
+<details><summary>Bell tamper</summary><p class="small"><b>Start with the event log.</b> Establish whether the tamper occurs at rest, during bell activation, or only intermittently.</p><ol class="steps"><li>Inspect external sounder lid/tamper switch and wiring.</li><li>Check panel voltage at rest.</li><li>Activate the bell and measure the supply again.</li><li>Inspect cable joints, terminals and any junction boxes.</li><li>Check bell battery condition and PCB connections.</li><li>Verify the tamper return and resistor arrangement against the panel/sounder manual.</li><li>Retest repeatedly and confirm the fault restores correctly.</li></ol><p class="small"><b>Useful clue:</b> if the fault appears immediately after a bell activation and restores quickly, investigate the bell supply/load, battery and tamper circuit rather than assuming the panel is faulty.</p></details>
+<details><summary>Zone tamper</summary><p class="small">Confirm whether the fault is permanent or intermittent, then isolate device/cable/panel systematically.</p><ol class="steps"><li>Check event history and identify the exact zone.</li><li>Inspect detector lid, tamper switch and terminals.</li><li>Confirm the programmed wiring type (EOL/DEOL/TEOL as applicable).</li><li>Measure resistance at the device and at the panel.</li><li>Wiggle-test the cable and inspect joints.</li><li>Temporarily substitute/test in accordance with the manufacturer's procedure.</li><li>Restore the original circuit and retest.</li></ol></details>
+<details><summary>Zone false alarm</summary><ol class="steps"><li>Check event history for pattern/time.</li><li>Identify detector type and environment.</li><li>Inspect for insects, cobwebs, heat sources, drafts, sunlight, loose mounting and vibration.</li><li>Check detector supply voltage.</li><li>Check cable and connections.</li><li>Check programming and sensitivity/attributes where supported.</li><li>Test the detector under controlled conditions.</li></ol></details>
+<details><summary>Mains / battery fault</summary><ol class="steps"><li>Confirm mains status and PSU indication.</li><li>Measure panel charging/supply voltage according to manufacturer specification.</li><li>Inspect battery terminals and fuse.</li><li>Check battery age and physical condition.</li><li>Measure under appropriate load/test conditions.</li><li>Check total auxiliary load if voltage is low.</li></ol></details>
+<details><summary>Voltage drop</summary><p class="small">Measure at the panel and at the device <b>under load</b>. Calculate the difference. Investigate cable resistance, cable length, connections, conductor size and load/current demand. Do not use a generic pass/fail voltage as a substitute for the panel/device manufacturer's specification.</p></details>
+<details><summary>ATS / ARC / communications fault</summary><ol class="steps"><li>Read the exact event text and timestamp.</li><li>Identify the communication path: IP, 4G/GSM, PSTN or other.</li><li>Check panel communicator status and power.</li><li>Check network/SIM/connectivity indicators where applicable.</li><li>Check signal and polling/heartbeat status where supported.</li><li>Confirm ARC account/path configuration with the monitoring provider.</li><li>Perform the manufacturer's approved communications test.</li></ol></details>
+<details><summary>Wireless / Ricochet device missing</summary><ol class="steps"><li>Check device battery and tamper.</li><li>Check last-seen/signal information.</li><li>Check device location and obstructions.</li><li>Check wireless network topology/expander status.</li><li>Use manufacturer software/tools where available.</li><li>Re-learn only using the correct manufacturer procedure.</li></ol></details>
+<details><summary>RS485 / bus / expander fault</summary><ol class="steps"><li>Identify the exact bus device/address.</li><li>Check supply at the device.</li><li>Inspect polarity and cable continuity.</li><li>Check topology and termination requirements for the specific system.</li><li>Check addressing and duplicate addresses.</li><li>Isolate sections systematically and follow the manufacturer's bus procedure.</li></ol></details>
+<details><summary>Intermittent fault</summary><p class="small">Record exact time, weather/temperature if relevant, system state, recent events and what action causes the fault. Test mechanically (movement/vibration), electrically (voltage/resistance) and by substitution only where the manufacturer procedure permits.</p></details>
+</div>
+<div class="warning" style="margin-top:12px">Safety: this is a troubleshooting aid. Verify the exact panel/model/firmware and manufacturer's instructions before changing programming, wiring or protection circuits. Follow safe electrical working practices.</div>
+</section>
+
+<section class="view" id="wiring">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>📐 Wiring & Diagrams</h2><span class="pill">VISUAL</span></div>
+<details open><summary>Generic DEOL PIR concept</summary>
+<div class="diagram">
+<div><span class="terminal">PANEL +12V</span><span class="terminal">PANEL 0V</span><span class="terminal">ZONE</span><span class="terminal">TAMPER</span></div>
+<div class="arrow">↓ 4-core cable (example)</div>
+<div><span class="terminal">PIR +</span><span class="terminal">PIR -</span><span class="terminal">ALARM</span><span class="terminal">TAMPER</span></div>
+<div class="arrow">↓</div>
+<div><span class="terminal">R1 = EOL</span><span class="terminal">R2 = ALARM/EOL</span></div>
+<p class="small">This is a conceptual visual only. Resistor values, terminal arrangement and exact circuit depend on the panel/device and programmed wiring type.</p>
+</div></details>
+<details><summary>Door contact concept</summary><div class="diagram"><span class="terminal">ZONE</span> → <span class="terminal">CONTACT</span> → <span class="terminal">EOL / DEOL as specified</span> → <span class="terminal">RETURN</span><p class="small">Keep the physical magnet and reed alignment correct; inspect cable routing and tamper protection where required.</p></div></details>
+<details><summary>External sounder concept</summary><div class="diagram"><span class="terminal">PANEL AUX / BELL +</span> <span class="terminal">0V</span> <span class="terminal">BELL TRIGGER</span> <span class="terminal">TAMPER RETURN</span><div class="arrow">↓</div><span class="terminal">SOUNDER PCB</span><p class="small">Exact terminal names, trigger polarity, resistor/tamper arrangement and battery charging behaviour vary by panel and sounder. Use the official installation manual for the actual connection.</p></div></details>
+<details><summary>RS485 / bus concept</summary><div class="diagram"><span class="terminal">+V</span> <span class="terminal">0V</span> <span class="terminal">A / D+</span> <span class="terminal">B / D-</span><div class="arrow">↓</div><span class="terminal">KEYPAD / RIO / EXPANDER</span><p class="small">Do not assume A/B naming or termination rules across manufacturers. Follow the exact system manual.</p></div></details>
+<p class="small">The app deliberately uses generic diagrams here and links to official manufacturer documentation rather than copying copyrighted installation drawings.</p>
+</section>
+
+<section class="view" id="panels">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>📚 Panel Library</h2><span class="pill">OFFICIAL SOURCES</span></div>
+<div class="list">
+<div class="item"><h3>Texecom Premier Elite 24</h3><p>8 onboard zones expandable to 24; SmartCom/SmartCom 4G options; Grade 3. <a class="link" target="_blank" href="https://www.texe.com/products/premier-elite-24/">Official product & downloads →</a></p><div class="source">Source: Texecom</div></div>
+<div class="item"><h3>Texecom Premier Elite 88</h3><p>8 zones expandable to 88; 8 areas; SmartCom/SmartCom 4G; Ethernet/Wi-Fi/4G options. <a class="link" target="_blank" href="https://www.texe.com/products/premier-elite-88/">Official product & downloads →</a></p><div class="source">Source: Texecom</div></div>
+<div class="item"><h3>Pyronix Enforcer V11</h3><p>Official hub containing user, programming, communications, installation and quick-start documentation. <a class="link" target="_blank" href="https://www.support.pyronix.com/uk/product/enforcer-v11">Open official support hub →</a></p><div class="source">Source: Pyronix Support Hub</div></div>
+<div class="item"><h3>RISCO LightSYS+</h3><p>Official product page with installer manuals, user manuals, quick guides and wiring diagrams. <a class="link" target="_blank" href="https://riscogroup.com/en/rscm_product/lightsys/">Open official resources →</a></p><div class="source">Source: RISCO</div></div>
+<div class="item"><h3>Eaton / Scantronic i-on10</h3><p>Official product page with user/admin documentation and product resources. <a class="link" target="_blank" href="https://www.eaton.com/gb/en-gb/catalog/safety-security-and-emergency-communications/i-on10-panel.html">Open official resources →</a></p><div class="source">Source: Eaton</div></div>
+<div class="item"><h3>Eaton / Scantronic i-on40H</h3><p>Official product page; installer/engineering guides are available through the MyScantronic installer hub. <a class="link" target="_blank" href="https://www.eaton.com/gb/en-gb/catalog/safety-security-and-emergency-communications/i-on40h-panel.html">Open official product page →</a></p><div class="source">Source: Eaton</div></div>
+</div>
+</section>
+
+<section class="view" id="codes">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>🔑 Codes & Commissioning</h2><span class="pill">AUTHORISED USE</span></div>
+<div class="warning">Only use engineer/user credentials on systems you are authorised to service. Defaults can vary by panel, firmware and configuration. This toolkit intentionally does not provide a universal list of live default credentials; use the exact manufacturer manual for the installed model/version.</div>
+<table><thead><tr><th>Manufacturer</th><th>Panel family</th><th>Reference</th></tr></thead><tbody>
+<tr><td>Texecom</td><td>Premier Elite / Premier</td><td><a class="link" target="_blank" href="https://www.texe.com/help-and-support/product-support/">Official downloads →</a></td></tr>
+<tr><td>Pyronix</td><td>Enforcer</td><td><a class="link" target="_blank" href="https://www.support.pyronix.com/uk/product/enforcer-v11">Official support hub →</a></td></tr>
+<tr><td>RISCO</td><td>LightSYS+</td><td><a class="link" target="_blank" href="https://riscogroup.com/en/rscm_product/lightsys/">Official manuals →</a></td></tr>
+<tr><td>Eaton</td><td>i-on / Scantronic</td><td><a class="link" target="_blank" href="https://www.eaton.com/gb/en-gb/catalog/safety-security-and-emergency-communications.html">Official security resources →</a></td></tr>
+</tbody></table>
+<details><summary>Commissioning checklist</summary><ol class="steps"><li>Confirm panel/model/firmware.</li><li>Confirm zones and wiring types.</li><li>Confirm detector operation and tamper circuits.</li><li>Test internal/external sounders and strobes.</li><li>Test mains and standby battery.</li><li>Test communications/ARC path where applicable.</li><li>Check time/date and event log.</li><li>Test user operation.</li><li>Complete required signalling and alarm tests.</li><li>Document final condition and any recommendations.</li></ol></details>
+</section>
+
+<section class="view" id="tools">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>Ω Engineer Tools</h2><span class="pill">CALCULATORS</span></div>
+<div class="two">
+<div class="item"><h3>Voltage drop</h3><input id="vdI" class="calc-input" inputmode="decimal" placeholder="Current (A)"><input id="vdR" class="calc-input" inputmode="decimal" placeholder="Loop resistance (Ω)"><button class="btn" type="button" onclick="calcVD()">Calculate</button><p id="vdOut" class="small"></p></div>
+<div class="item"><h3>Battery runtime estimate</h3><input id="bat" class="calc-input" inputmode="decimal" placeholder="Battery Ah"><input id="load" class="calc-input" inputmode="decimal" placeholder="Load A"><button class="btn" type="button" onclick="calcBat()">Calculate</button><p id="batOut" class="small"></p></div>
+<div class="item"><h3>Ohm's law — resistance</h3><input id="ohmV" class="calc-input" inputmode="decimal" placeholder="Voltage (V)"><input id="ohmI" class="calc-input" inputmode="decimal" placeholder="Current (A)"><button class="btn" type="button" onclick="calcResistance()">Calculate</button><p id="ohmOut" class="small"></p></div>
+<div class="item"><h3>Ohm's law — current</h3><input id="curV" class="calc-input" inputmode="decimal" placeholder="Voltage (V)"><input id="curR" class="calc-input" inputmode="decimal" placeholder="Resistance (Ω)"><button class="btn" type="button" onclick="calcCurrent()">Calculate</button><p id="curOut" class="small"></p></div>
+</div>
+<p class="small">Calculators are estimates only. Apply the relevant standards, battery manufacturer's data, PSU capacity, environmental factors and panel-specific requirements when designing or verifying a system.</p>
+</section>
+
+<section class="view" id="site">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>🧰 Site Mode</h2><span class="pill">FIELD NOTES</span></div>
+<div class="item"><textarea id="siteNote" style="width:100%;min-height:240px;background:#091017;color:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit" placeholder="Panel / fault / event log / measurements / tests / parts / final result…"></textarea><br><button class="btn" onclick="copySite()">Copy service note</button></div>
+</section>
+
+<section class="view" id="ai">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>🤖 AI Engineer</h2><span class="pill">LIVE AI</span></div>
+<div class="item">
+<p class="small">Describe the panel, fault/event log, measurements and tests you've carried out. The AI will help structure the diagnosis. Verify advice against the exact manufacturer manual before changing wiring or programming.</p>
+<textarea id="aiPrompt" style="width:100%;min-height:220px;background:#091017;color:#fff;border:1px solid var(--line);border-radius:12px;padding:12px;font:inherit" placeholder="e.g. Texecom Premier Elite 24 — zone 3 tamper. 13.4V at panel, 12.9V at device. Event log shows…"></textarea>
+<br>
+<div style="display:flex;gap:8px;flex-wrap:wrap">
+<button class="btn" type="button" onclick="askAI()">Ask AI</button>
+<button class="btn" type="button" onclick="copyAI()">Copy prompt</button>
+</div>
+<p id="aiStatus" class="small" style="margin-top:10px"></p>
+<div id="aiAnswer" class="item hide" style="margin-top:10px;white-space:pre-wrap;line-height:1.6"></div>
+</div>
+</section>
+
+<section class="view" id="resources">
+<a class="home-link" href="#home">← Home</a>
+<div class="section-title"><h2>🔗 Manufacturer Resources</h2><span class="pill">OFFICIAL</span></div>
+<div class="list">
+<div class="item"><h3>Texecom</h3><a class="link" target="_blank" href="https://www.texe.com/help-and-support/product-support/">Product downloads & manuals →</a></div>
+<div class="item"><h3>Pyronix</h3><a class="link" target="_blank" href="https://www.support.pyronix.com/uk/">Support Hub →</a></div>
+<div class="item"><h3>RISCO</h3><a class="link" target="_blank" href="https://riscogroup.com/en/">Official site →</a></div>
+<div class="item"><h3>Eaton Security</h3><a class="link" target="_blank" href="https://www.eaton.com/gb/en-gb/catalog/safety-security-and-emergency-communications.html">Official security resources →</a></div>
+<div class="item"><h3>Orisec</h3><a class="link" target="_blank" href="https://www.orisec.co.uk/">Official site →</a></div>
+</div>
+</section>
+
+<section id="regulations" class="view">
+  <a class="home-link" href="#home">← Home</a>
+  <div class="section-title">
+    <h2>⚖️ Regulations</h2>
+    <p>UK alarm regulations & standards</p>
+  </div>
+  <div class="info-card">
+    <h3>Intruder & Hold-Up</h3>
+    <p>EN 50131 and the relevant UK application standards and guidance.</p>
+  </div>
+  <div class="info-card">
+    <h3>Fire Alarm</h3>
+    <p>BS 5839 series — fire detection and alarm systems.</p>
+  </div>
+  <div class="info-card">
+    <h3>Alarm Transmission</h3>
+    <p>EN 50136 — alarm transmission systems and equipment.</p>
+  </div>
+  <div class="warning">
+    Quick reference only. Always use the current applicable standard and manufacturer's instructions.
+  </div>
+</section>
+
+</main>
+
+<footer>
+<a class="nav active" href="#home"><b>⌂</b>Home</a>
+<a class="nav" href="#tools"><b>Ω</b>Tools</a>
+<a class="nav" href="#faults"><b>⚠</b>Faults</a>
+<a class="nav" href="#panels"><b>▣</b>Systems</a>
+<a class="nav" href="#site"><b>🧰</b>Site</a>
+</footer>
+
+
+
+
+
+<script>
+(function () {
+  function qs(id) { return document.getElementById(id); }
+
+  function showView(id) {
+    id = id || 'home';
+    var target = qs(id);
+
+    if (!target || !target.classList.contains('view')) {
+      id = 'home';
+      target = qs('home');
+    }
+
+    document.querySelectorAll('main .view').forEach(function (view) {
+      view.style.display = (view.id === id) ? 'block' : 'none';
+    });
+
+    document.querySelectorAll('footer .nav').forEach(function (nav) {
+      nav.classList.toggle('active', nav.getAttribute('href') === '#' + id);
+    });
+
+    window.scrollTo(0, 0);
+  }
+
+  function navigate(hash) {
+    var id = (hash || '#home').replace(/^#/, '');
+    if (!qs(id) || !qs(id).classList.contains('view')) id = 'home';
+    history.pushState(null, '', '#' + id);
+    showView(id);
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    showView((location.hash || '#home').slice(1));
+  });
+
+  window.addEventListener('hashchange', function () {
+    showView((location.hash || '#home').slice(1));
+  });
+
+  window.addEventListener('popstate', function () {
+    showView((location.hash || '#home').slice(1));
+  });
+
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest('a[href^="#"]');
+    if (!link) return;
+
+    var href = link.getAttribute('href');
+    if (!href || href === '#') return;
+
+    var target = qs(href.substring(1));
+    if (!target || !target.classList.contains('view')) return;
+
+    event.preventDefault();
+    navigate(href);
+  });
+
+  window.AlarmIQNavigateHome = function () {
+    navigate('#home');
+  };
+})();
+</script>
+
+
+
+
+
+<script id="aiq-working-router">
+(function () {
+  function view(id) {
+    var el = document.getElementById(id);
+    return el && el.classList.contains("view") ? el : null;
+  }
+
+  function show(id) {
+    var target = view(id) || view("home");
+    if (!target) return;
+
+    document.querySelectorAll("main .view").forEach(function (v) {
+      v.style.display = "none";
+    });
+    target.style.display = "block";
+
+    window.scrollTo(0, 0);
+  }
+
+  function route() {
+    show((location.hash || "#home").substring(1));
+  }
+
+  document.addEventListener("DOMContentLoaded", route);
+  window.addEventListener("hashchange", route);
+
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+    if (!a) return;
+
+    var id = a.getAttribute("href").substring(1);
+    if (!view(id)) return;
+
+    e.preventDefault();
+
+    if (location.hash === "#" + id) {
+      show(id);
+    } else {
+      location.hash = id;
+    }
+  }, true);
+})();
+</script>
+
+</body>
+</html>
